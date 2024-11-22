@@ -2,54 +2,63 @@
   <div class="container mt-5">
     <!-- Header Section -->
     <div class="text-center">
-      <h1 class="mb-4">🌟 Website Performance Checker 🌟</h1>
-      <p class="text-muted">
-        Measure the performance of your website for <strong>Desktop</strong> or <strong>Mobile</strong> platforms.
+      <h1 class="mb-4 fw-bold gradient-text">🌟 Website Performance Checker 🌟</h1>
+      <p class="text-muted fs-5">
+        Evaluate your website's performance for <strong>Desktop</strong> or <strong>Mobile</strong> platforms effortlessly.
       </p>
     </div>
 
     <!-- Input Form Section -->
-    <div class="card shadow-lg p-4">
-      <h5 class="mb-3 text-primary">Enter Details</h5>
+    <div class="card shadow-lg p-5 rounded-4 border-0 form-card">
+      <h5 class="mb-4 text-primary fw-bold">Enter Website Details</h5>
       <form @submit.prevent="checkPerformance">
         <!-- URL Input -->
-        <div class="mb-3">
-          <label for="url" class="form-label">Website URL</label>
+        <div class="mb-4">
+          <label for="url" class="form-label fw-semibold fs-5">Website URL</label>
           <input 
             id="url" 
             v-model="url" 
             type="url" 
-            class="form-control" 
+            class="form-control form-control-lg" 
             placeholder="https://example.com" 
             required 
           />
         </div>
 
         <!-- Platform Selector -->
-        <div class="mb-3">
-          <label for="platform" class="form-label">Select Platform</label>
-          <select id="platform" v-model="platform" class="form-select">
+        <div class="mb-4">
+          <label for="platform" class="form-label fw-semibold fs-5">Select Platform</label>
+          <select id="platform" v-model="platform" class="form-select form-select-lg">
             <option value="desktop">Desktop</option>
             <option value="mobile">Mobile</option>
           </select>
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" class="btn btn-primary w-100" :disabled="loading">
-          {{ loading ? 'Checking...' : 'Check Performance' }}
+        <button 
+          type="submit" 
+          class="btn btn-gradient w-100 btn-lg shadow-lg" 
+          :disabled="loading"
+        >
+          {{ loading ? 'Analyzing...' : '🚀 Check Performance' }}
         </button>
       </form>
     </div>
 
     <!-- Results Section -->
-    <div v-if="performanceScore !== null" class="mt-4 alert alert-success text-center">
-      <h4 class="mb-3">Performance Score</h4>
-      <p class="display-4 text-success">{{ performanceScore }}</p>
+    <div v-if="performanceScore !== null" class="mt-5 text-center score-section">
+      <h4 class="mb-3 fw-bold text-primary">Performance Score</h4>
+      <p 
+        class="display-3 score-display" 
+        :class="{ 'high-score': performanceScore > 80, 'medium-score': performanceScore > 50 && performanceScore <= 80, 'low-score': performanceScore <= 50 }"
+      >
+        {{ performanceScore }}
+      </p>
     </div>
 
     <!-- Error Section -->
-    <div v-if="errorMessage" class="mt-4 alert alert-danger text-center">
-      <h4>Error</h4>
+    <div v-if="errorMessage" class="mt-4 alert alert-danger text-center rounded-4">
+      <h4 class="fw-bold">Error</h4>
       <p>{{ errorMessage }}</p>
     </div>
   </div>
@@ -83,15 +92,11 @@ export default {
         });
 
         // Handle success response
-        if (response.data && response.data.performanceScore !== undefined) {
-          this.performanceScore = response.data.performanceScore;
-        } else {
-          throw new Error("Invalid response from the server.");
-        }
+        this.performanceScore = response.data.performance_score; // Update based on API key
       } catch (error) {
         // Handle error response
-        console.error("Performance check error:", error);
-        this.errorMessage = error.response?.data?.message || "An error occurred while checking performance. Please try again.";
+        this.errorMessage = "An error occurred while checking performance.";
+        console.error(error);
       } finally {
         // Reset loading state
         this.loading = false;
@@ -103,26 +108,90 @@ export default {
 
 <style scoped>
 .container {
-  max-width: 600px;
+  max-width: 700px;
   margin: auto;
 }
 
-.card {
-  border: none;
-  border-radius: 12px;
+/* Gradient Text */
+.gradient-text {
+  background: linear-gradient(to right, #ff7eb3, #ff758c, #ff6473);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-button:disabled {
-  background-color: #6c757d;
+/* Form Card Styling */
+.form-card {
+  background: #f9f9f9;
+  border: 2px solid #e0e0e0;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Gradient Button Styling */
+.btn-gradient {
+  background: linear-gradient(90deg, #ff758c, #ff7eb3);
+  border: none;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.btn-gradient:disabled {
+  background: #adb5bd;
   cursor: not-allowed;
 }
 
-.alert {
+.btn-gradient:hover:not(:disabled) {
+  background: linear-gradient(90deg, #ff6473, #ff758c);
+  transform: scale(1.03);
+}
+
+/* Score Section */
+.score-section {
+  background: #fff;
+  border: 2px solid #e0e0e0;
+  padding: 20px;
   border-radius: 12px;
 }
 
-.display-4 {
-  font-size: 3rem;
+.score-display {
   font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 50px;
+}
+
+.high-score {
+  color: #28a745;
+  background-color: #d4edda;
+}
+
+.medium-score {
+  color: #ffc107;
+  background-color: #fff3cd;
+}
+
+.low-score {
+  color: #dc3545;
+  background-color: #f8d7da;
+}
+
+/* Input Styling */
+.form-control-lg,
+.form-select-lg {
+  font-size: 1.2rem;
+  padding: 12px;
+}
+
+label {
+  font-size: 1.1rem;
+}
+
+.alert {
+  font-size: 1.2rem;
+  border-radius: 12px;
 }
 </style>

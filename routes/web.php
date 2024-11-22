@@ -13,5 +13,6 @@ Route::post('/lighthouse/check', [LighthouseController::class, 'checkPerformance
 
 Route::get('login/google', [GoogleController::class, 'redirectToGoogle']);
 Route::post('/lighthouse/check', [LighthouseController::class, 'checkPerformance']);
+Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 
